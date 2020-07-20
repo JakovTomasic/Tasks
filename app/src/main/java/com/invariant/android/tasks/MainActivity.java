@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+
     /**
      * Main application object with all global application data.
      */
