@@ -106,11 +106,19 @@ public class MainActivity extends AppCompatActivity {
         lvTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                EditTaskData editTaskData = new EditTaskData(MainActivity.this, tasksAdapter.getItem(position));
-                editTaskData.setOnDataSavedListener(new EditTaskData.OnDataSavedListener() {
+                EditTaskData editTaskData = new EditTaskData(MainActivity.this,
+                        tasksAdapter.getItem(position), false);
+                editTaskData.setOnFinishListener(new EditTaskData.OnFinishListener() {
                     @Override
                     public void onSuccessfulSave(Task task) {
                         ((AppData) getApplication()).replaceTask(position, task);
+                        tasksAdapter.notifyDataSetChanged();
+
+                        tagLinesView.refresh(tasksAdapter);
+                    }
+                    @Override
+                    public void onDelete(Task task) {
+                        ((AppData) getApplication()).removeTask(position);
                         tasksAdapter.notifyDataSetChanged();
 
                         tagLinesView.refresh(tasksAdapter);
@@ -127,7 +135,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
                 try {
                     View c = lvTasks.getChildAt(0);
                     int scrollY = -c.getTop() + lvTasks.getFirstVisiblePosition() * c.getHeight();
@@ -161,14 +170,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add_task:
-                EditTaskData editTaskData = new EditTaskData(this, new Task(appData.getNextId()));
-                editTaskData.setOnDataSavedListener(new EditTaskData.OnDataSavedListener() {
+                EditTaskData editTaskData = new EditTaskData(this,
+                        new Task(appData.getNextId()), true);
+                editTaskData.setOnFinishListener(new EditTaskData.OnFinishListener() {
                     @Override
                     public void onSuccessfulSave(Task task) {
                         ((AppData) getApplication()).addTask(task);
                         tasksAdapter.notifyDataSetChanged();
 
                         tagLinesView.refresh(tasksAdapter);
+                    }
+
+                    @Override
+                    public void onDelete(Task task) {
+
                     }
                 });
                 editTaskData.openDialog();

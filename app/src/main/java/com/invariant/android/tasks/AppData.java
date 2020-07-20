@@ -108,12 +108,21 @@ public class AppData extends Application {
     void replaceTask(int position, Task tasks) {
         this.tasks.set(position, tasks);
     }
+
     /**
      * Adds the {@param task} to the {@link AppData#tasks} list.
      */
     void addTask(Task task) {
         this.tasks.add(task);
         task.setPosition(getTasks().size()-1);
+    }
+
+    /**
+     * Removes task from the list.
+     * @param position Index of the task that need to be removed.
+     */
+    void removeTask(int position) {
+        this.tasks.remove(position);
     }
 
 }

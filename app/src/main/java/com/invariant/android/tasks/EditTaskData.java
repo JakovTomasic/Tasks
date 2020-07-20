@@ -47,31 +47,44 @@ class EditTaskData {
      */
     private View dialogView;
 
+    /**
+     * True if this is dialog for the new task,
+     * false if task is already in the tasks list
+     */
+    private boolean addingNewTask;
 
     /**
-     * Interface for the custom listener when task is saved.
+     * Interface for the custom listener dialog is closed.
      */
-    interface OnDataSavedListener {
+    interface OnFinishListener {
         /**
          * Interface for the custom listener when task is saved successfully.
          * @param task Task that is saved in.
          */
         void onSuccessfulSave(Task task);
+
+        /**
+         * Interface for the custom listener when task is deleted.
+         * @param task Task that will be deleted.
+         */
+        void onDelete(Task task);
     }
     /**
      * Listener
      */
-    private OnDataSavedListener onDataSavedListener = null;
+    private OnFinishListener onFinishListener = null;
 
 
     /**
      * Constructor. It copies given task in case editing is terminated.
      * @param context See {@link #context}
      * @param task Task to edit. It is copied into the {@link #task}.
+     * @param addingNewTask See {@link #addingNewTask}
      */
-    EditTaskData(Activity context, Task task) {
+    EditTaskData(Activity context, Task task, boolean addingNewTask) {
         this.context = context;
         this.task = new Task(task);
+        this.addingNewTask = addingNewTask;
     }
 
     /**
@@ -136,6 +149,7 @@ class EditTaskData {
             }
         });
 
+
         // Build dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogCustom);
         // TODO: wut?! HARDCODING!!!
@@ -169,14 +183,25 @@ class EditTaskData {
                         }
 
                         // Close the dialog
-                        if (alertDialog != null) {
-                            alertDialog.dismiss();
-                        }
+                        alertDialog.dismiss();
                         // Call listener
-                        if(onDataSavedListener != null) onDataSavedListener.onSuccessfulSave(task);
+                        if(onFinishListener != null) onFinishListener.onSuccessfulSave(task);
                     }
                 });
 
+            }
+        });
+
+        // Setup delete button
+        View btnDelete = dialogView.findViewById(R.id.btn_delete);
+        if(addingNewTask) btnDelete.setVisibility(View.GONE);
+        else btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close the dialog
+                alertDialog.dismiss();
+                // Call listener
+                if(onFinishListener != null) onFinishListener.onDelete(task);
             }
         });
 
@@ -267,10 +292,10 @@ class EditTaskData {
 
     /**
      * Setter method for the listener.
-     * @param onDataSavedListener Custom listener. See {@link #onDataSavedListener}.
+     * @param onFinishListener Custom listener. See {@link #onFinishListener}.
      */
-    void setOnDataSavedListener(OnDataSavedListener onDataSavedListener) {
-        this.onDataSavedListener = onDataSavedListener;
+    void setOnFinishListener(OnFinishListener onFinishListener) {
+        this.onFinishListener = onFinishListener;
     }
 
 }
