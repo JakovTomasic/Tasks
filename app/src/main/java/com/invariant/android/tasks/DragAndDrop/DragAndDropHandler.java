@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.invariant.android.tasks.TagLines.TagLinesView;
 import com.invariant.android.tasks.Task;
 import com.invariant.android.tasks.TasksAdapter;
 
@@ -41,6 +42,12 @@ public class DragAndDropHandler implements ListView.OnItemLongClickListener, Lis
     private TasksAdapter tasksAdapter;
 
     /**
+     * Custom view currently displaying tag lines. Used for invalidation on {@link this#lvTasks}
+     * data change.
+     */
+    private TagLinesView tagLinesView;
+
+    /**
      * Vertical coordinate of the last point over which item has been dragged.
      * Used to determine to automatically scroll {@link AutoScrollHandler} up or down.
      */
@@ -58,12 +65,13 @@ public class DragAndDropHandler implements ListView.OnItemLongClickListener, Lis
      * @param lvTasks See {@link this#lvTasks}
      * @param tasksAdapter See {@link this#tasksAdapter}
      */
-    public DragAndDropHandler(Activity context, ArrayList<Task> tasks,
-                              ListView lvTasks, TasksAdapter tasksAdapter) {
+    public DragAndDropHandler(Activity context, ArrayList<Task> tasks, ListView lvTasks,
+                              TasksAdapter tasksAdapter, TagLinesView tagLinesView) {
         this.context = context;
         this.tasks = tasks;
         this.lvTasks = lvTasks;
         this.tasksAdapter = tasksAdapter;
+        this.tagLinesView = tagLinesView;
         autoScrollHandler = new AutoScrollHandler(context, lvTasks);
     }
 
@@ -145,6 +153,7 @@ public class DragAndDropHandler implements ListView.OnItemLongClickListener, Lis
                 break;
             case DragEvent.ACTION_DROP:
                 tasksAdapter.moveItem(dragStartPosition, position);
+                tagLinesView.refresh(tasksAdapter);
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
                 View view = (View) event.getLocalState();

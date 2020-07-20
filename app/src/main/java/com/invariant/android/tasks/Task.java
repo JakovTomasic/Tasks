@@ -7,8 +7,7 @@ import androidx.annotation.NonNull;
  */
 public class Task {
 
-    // TODO: long ?invalid date and time?
-
+    private int id, position;
     /**
      * Data of the {@link Task}.
      */
@@ -25,7 +24,8 @@ public class Task {
      * @param start Start time of the {@link Task} in milliseconds.
      * @param end End time of the {@link Task} in milliseconds.
      */
-    Task(String title, long start, long end) {
+    Task(int id, String title, long start, long end) {
+        this.id = id;
         this.title = title;
         this.start = start;
         this.end = end;
@@ -37,20 +37,17 @@ public class Task {
      * It shallow copies an {@link Task} object.
      */
     Task(Task copyFrom) {
-        this.title = copyFrom.getTitle();
-        this.start = copyFrom.getStart();
-        this.end = copyFrom.getEnd();
-        this.tag = copyFrom.getTag();
+        shallowCopy(copyFrom);
     }
 
     /**
      * Constructor for making empty {@link Task} object.
      * Initialises all variable.
      */
-    Task() {
+    Task(int id) {
+        this.id = id;
         this.title = "";
-        this.start = 0;
-        this.end = 0;
+        this.start = this.end = System.currentTimeMillis();
         this.tag = "";
     }
 
@@ -58,6 +55,8 @@ public class Task {
      * It shallow copies an existing {@link Task} object into this one.
      */
     void shallowCopy(Task copyFrom) {
+        this.id = copyFrom.getId();
+        this.position = copyFrom.getPosition();
         this.title = copyFrom.getTitle();
         this.start = copyFrom.getStart();
         this.end = copyFrom.getEnd();
@@ -65,7 +64,6 @@ public class Task {
     }
 
     /**
-     *
      * @return total duration of the {@link Task} in milliseconds.
      *         Retruns 0 if {@link Task#end} is before {@link Task#start}.
      */
@@ -73,14 +71,27 @@ public class Task {
         return Math.max(getEnd()-getStart(), 0);
     }
 
-    // TODO: implement
-    boolean isTaskValid() {
-        return true;
+    /**
+     * Checks if given task is valid. Used for task changing input validation.
+     * @return true if task is valid, false otherwise.
+     */
+    boolean isValid() {
+        if(start > end) return false;
+        return !title.isEmpty();
     }
 
     /**
      * Setter and getter methods
      */
+    int getId() {
+        return this.id;
+    }
+    public void setPosition(int position) {
+        this.position = position;
+    }
+    int getPosition() {
+        return this.position;
+    }
     void setTitle(@NonNull String title) {
         this.title = title;
     }
@@ -102,7 +113,7 @@ public class Task {
     void setTag(String tag) {
         this.tag = tag;
     }
-    String getTag() {
+    public String getTag() {
         return tag;
     }
 

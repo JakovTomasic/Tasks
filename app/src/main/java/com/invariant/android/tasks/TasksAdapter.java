@@ -75,9 +75,7 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
     public void moveItem(int fromPosition, int toPosition) {
         if(!isValidPosition(fromPosition) || !isValidPosition(toPosition)) return;
         if(fromPosition == toPosition) return;
-        Task moveItem = getItem(fromPosition);
-        remove(moveItem);
-        insert(moveItem, toPosition);
+        ((AppData)((Activity) getContext()).getApplication()).moveItem(fromPosition, toPosition);
     }
 
     /**

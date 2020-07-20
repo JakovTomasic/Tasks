@@ -2,6 +2,7 @@
 <RelativeLayout
     android:id="@+id/root"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,5 +12,25 @@
         android:id="@+id/tasks_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+
+    <com.invariant.android.tasks.TagLines.NonScrollableScrollView
+        android:id="@+id/tag_lines_root_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:scrollbars="none">
+
+            <com.invariant.android.tasks.TagLines.TagLinesView
+                android:id="@+id/tag_lines_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                custom:preferredLineWidth="3dp"
+                custom:maxWidth="100dp"
+                custom:lineColor="@color/line"/>
+
+    </com.invariant.android.tasks.TagLines.NonScrollableScrollView>
+
 
 </RelativeLayout>

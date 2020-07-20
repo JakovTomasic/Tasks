@@ -8,32 +8,79 @@ import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
+// TODO: a lot of HARDCODING!! no!...
 
+/**
+ * Handles dialog for editing existing task and adding a new one.
+ */
 class EditTaskData {
 
+    /**
+     * Constants for the DateTime dialog. Tells if the
+     * dialog is changing task start or task end time.
+     */
     private static final int ID_TYPE_START = 0;
     private static final int ID_TYPE_END = 1;
 
+    /**
+     * Current activity for context
+     */
     private Activity context;
+    /**
+     * Task that is being edited.
+     * New task if adding and existing one (shallow copied) if editing.
+     *
+     */
     private Task task;
 
+    /**
+     * Main dialog view for context.
+     */
     private View dialogView;
 
+
+    /**
+     * Interface for the custom listener when task is saved.
+     */
+    interface OnDataSavedListener {
+        /**
+         * Interface for the custom listener when task is saved successfully.
+         * @param task Task that is saved in.
+         */
+        void onSuccessfulSave(Task task);
+    }
+    /**
+     * Listener
+     */
+    private OnDataSavedListener onDataSavedListener = null;
+
+
+    /**
+     * Constructor. It copies given task in case editing is terminated.
+     * @param context See {@link #context}
+     * @param task Task to edit. It is copied into the {@link #task}.
+     */
     EditTaskData(Activity context, Task task) {
         this.context = context;
         this.task = new Task(task);
     }
 
+    /**
+     * Creates and opens alert dialog for editing task.
+     */
     void openDialog() {
         dialogView = View.inflate(context, R.layout.dialog_edit_task, null);
 
+        // On title text change, save the title
         final EditText txtTitle = dialogView.findViewById(R.id.edit_text_task_title);
         txtTitle.setText(task.getTitle());
         txtTitle.addTextChangedListener(new TextWatcher() {
@@ -52,13 +99,12 @@ class EditTaskData {
             }
         });
 
+        // On tag text change, save the tag
         final EditText txtTag = dialogView.findViewById(R.id.edit_text_task_tag);
         txtTag.setText(task.getTag());
         txtTag.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -66,12 +112,13 @@ class EditTaskData {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
+        // Set start and edn dateTime textViews
         refreshDatesTimes();
 
+        // Edit start time edit button
         dialogView.findViewById(R.id.btn_edit_task_start)
                 .setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +127,7 @@ class EditTaskData {
             }
         });
 
+        // Edit end time edit button
         dialogView.findViewById(R.id.btn_edit_task_end)
                 .setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,29 +136,60 @@ class EditTaskData {
             }
         });
 
+        // Build dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogCustom);
+        // TODO: wut?! HARDCODING!!!
         builder.setTitle("Title");
-        builder.setPositiveButton("kk", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                task.setTitle(task.getTitle().trim());
-                task.setTag(task.getTag().trim());
+        // Listener is added later
+        builder.setPositiveButton("kk", null);
 
-                if (dialog != null) {
-                    dialog.dismiss();
-                }
+        // Create AlertDialog
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.setView(dialogView);
 
-                onDataSavedListener.onSuccessfulSave(task);
+        // When defined like this, clicking positive button won't dismiss dialog automatically
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button btnPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                btnPositive.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // Trim title and tag strings
+                        task.setTitle(task.getTitle().trim());
+                        task.setTag(task.getTag().trim());
+
+                        if(!task.isValid()) {
+                            // Show error toast
+                            // TODO: should not be hardcoded
+                            Toast.makeText(context, "Task is not valid",
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Close the dialog
+                        if (alertDialog != null) {
+                            alertDialog.dismiss();
+                        }
+                        // Call listener
+                        if(onDataSavedListener != null) onDataSavedListener.onSuccessfulSave(task);
+                    }
+                });
+
             }
         });
 
-        // Create and show the AlertDialog
-        AlertDialog alertDialog = builder.create();
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        alertDialog.setView(dialogView);
         alertDialog.show();
     }
 
-    void openDatePicker(final int typeId) {
+    /**
+     * Opens date picker dialog. On the positive button (next) time picker is opened.
+     *
+     * @param typeId Tells if this is for task start or end time.
+     *               See {@link #ID_TYPE_START} and {@link #ID_TYPE_END}
+     */
+    private void openDatePicker(final int typeId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final DatePicker datePicker = new DatePicker(context);
         datePicker.setCalendarViewShown(false);
@@ -131,7 +210,15 @@ class EditTaskData {
         builder.show();
     }
 
-    void openTimePicker(final int typeId, final DatePicker datePicker) {
+    /**
+     * Opens time picker dialog. On the positive button date and time are saved.
+     *
+     * @param typeId Tells if this is for task start or end time.
+     *               See {@link #ID_TYPE_START} and {@link #ID_TYPE_END}.
+     * @param datePicker Date picker from the previous {@link #openDatePicker(int)} dialog.
+     *                   Used to get selected date from it.
+     */
+    private void openTimePicker(final int typeId, final DatePicker datePicker) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final TimePicker timePicker = new TimePicker(context);
         timePicker.setIs24HourView(true);
@@ -155,6 +242,7 @@ class EditTaskData {
                         task.setEnd(timeMillis);
                         break;
                 }
+                // Refresh date time TextViews
                 refreshDatesTimes();
 
                 if (dialog != null) {
@@ -166,7 +254,10 @@ class EditTaskData {
         builder.show();
     }
 
-    void refreshDatesTimes() {
+    /**
+     * Refreshes (sets) all dateTime TestViews in the dialog
+     */
+    private void refreshDatesTimes() {
         // TODO: this dateFormat string should not be hardcoded
         ((TextView) dialogView.findViewById(R.id.txt_start_value)).setText(DateTimeConverter
                 .getDateTime(task.getStart(), "dd/MM/yyyy\nHH:mm"));
@@ -174,13 +265,11 @@ class EditTaskData {
                 .getDateTime(task.getEnd(), "dd/MM/yyyy\nHH:mm"));
     }
 
-    interface onDataSavedListener {
-        void onSuccessfulSave(Task task);
-    }
-
-    private onDataSavedListener onDataSavedListener;
-
-    void setOnDataSavedListener(onDataSavedListener onDataSavedListener) {
+    /**
+     * Setter method for the listener.
+     * @param onDataSavedListener Custom listener. See {@link #onDataSavedListener}.
+     */
+    void setOnDataSavedListener(OnDataSavedListener onDataSavedListener) {
         this.onDataSavedListener = onDataSavedListener;
     }
 
