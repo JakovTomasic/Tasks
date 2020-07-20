@@ -42,10 +42,13 @@ class TagLinesHelper {
      * Attributes of the {@link TagLinesView} object that are important for the
      * calculating {@link TagLinesView} and it's lines dimensions and positions.
      *
-     * maxWidthAttr -  Maximum width of {@link TagLinesView} object
-     * lineWidthAttr - Preferred line width.
+     * maxWidthAttr -   Maximum width of {@link TagLinesView} object
+     * lineWidthAttr -  Preferred line width.
+     * drawOneDotAttr - True if for tag with just one element should be drawn one dot without a line.
      */
     private int maxWidthAttr, lineWidthAttr;
+    private boolean drawOneDotAttr;
+
     /**
      * Horizontal size scale for when total size is wider than the {@link this#maxWidthAttr}.
      * It is always in the range (0 < value <= 1) as it is calculated as
@@ -65,7 +68,7 @@ class TagLinesHelper {
      * @param lineWidthAttr See {@link this#lineWidthAttr}
      */
     TagLinesHelper(Context context, TasksAdapter tasksAdapter,
-                   int maxWidthAttr, int lineWidthAttr) {
+                   int maxWidthAttr, int lineWidthAttr, boolean drawOneDotAttr) {
         AppData appData = (AppData) ((Activity) context).getApplication();
         this.tasks = appData.getTasks();
         this.tasksAdapter = tasksAdapter;
@@ -73,6 +76,7 @@ class TagLinesHelper {
 
         this.maxWidthAttr = maxWidthAttr;
         this.lineWidthAttr = lineWidthAttr;
+        this.drawOneDotAttr = drawOneDotAttr;
 
         calculate();
     }
@@ -102,11 +106,13 @@ class TagLinesHelper {
             lines.get(task.getTag()).addRow(currentRow);
         }
 
+        // Stores first row from which given column is free
+        int[] rowFreeAt = new int[lines.size()];
+        for(int i = 0; i < lines.size(); i++) rowFreeAt[i] = 0;
+
         // Calculates view width (by maximum number of lines present at one place)
         // and sets column of every line
-        // TODO: shorted lines are the most left, bigger ones more right (maybe for each column - not available until and the row..).
         currentRow = -1;
-        int currentTags = 0;
         Line currentLine;
         for(Task task : tasks) {
             currentRow++;
@@ -114,16 +120,25 @@ class TagLinesHelper {
 
             currentLine = lines.get(task.getTag());
 
-            if(currentRow == currentLine.getFirstRow()) currentTags++;
-            viewWidth = Math.max(viewWidth, currentTags);
-            // TODO: this is buggy (can be same for two tags)
-            if(!currentLine.isLineColumnSet()) currentLine.setLineColumn(currentTags-1);
-            if(currentRow == currentLine.getLastRow()) currentTags--;
+            if(currentLine == null) continue;
+            if(!drawOneDotAttr && currentLine.getRows().size() <= 1) continue;
+            if(currentLine.isLineColumnSet()) continue;
+
+            int numberOfOccupiedColumns = 0;
+            for(int column = 0; column < lines.size(); column++) {
+                numberOfOccupiedColumns++;
+
+                if(currentRow < rowFreeAt[column]) continue;
+                currentLine.setLineColumn(column);
+                rowFreeAt[column] = currentLine.getLastRow()+1;
+                break;
+            }
+            viewWidth = Math.max(viewWidth, numberOfOccupiedColumns);
         }
 
-        // Width of one line between every adjacent lines
-        viewWidth *= lineWidthAttr*2;
-        // and the same space before the first and after the last line
+        // Width between every adjacent lines
+        viewWidth *= lineWidthAttr*4;
+        // and the one line width before the first and after the last line
         viewWidth += lineWidthAttr*2;
 
         // Calculating horizontal scale if needed
@@ -153,8 +168,8 @@ class TagLinesHelper {
      *         from start of the canvas {@link TagLinesView}
      */
     float getColumnX(int column) {
-        float x = lineWidthAttr*2 * (column+1);
-        return x * horizontalScale;
+        float xFromLeft = lineWidthAttr*4 * (column+1);
+        return getViewWidth() - (xFromLeft * horizontalScale);
     }
 
     /**

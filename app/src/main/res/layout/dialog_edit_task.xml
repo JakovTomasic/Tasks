@@ -14,18 +14,20 @@
         <TextView
             android:id="@+id/txt_task_title"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
-            android:paddingLeft="32dp"
+            android:paddingLeft="@dimen/edit_task_padding_left"
             android:gravity="center_vertical"
-            android:text="Title"/>
+            android:text="@string/title"
+            android:textSize="@dimen/edit_task_txt_size"/>
 
         <EditText
             android:id="@+id/edit_text_task_title"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="2"
-            android:lines="1" />
+            android:maxLines="1"
+            android:inputType="text" />
 
     </LinearLayout>
 
@@ -39,24 +41,33 @@
         <TextView
             android:id="@+id/txt_start"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
-            android:paddingLeft="32dp"
+            android:paddingLeft="@dimen/edit_task_padding_left"
             android:gravity="center_vertical"
-            android:text="Start:"/>
+            android:text="@string/start"
+            android:textSize="@dimen/edit_task_txt_size" />
 
         <TextView
             android:id="@+id/txt_start_value"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
             android:gravity="center"
+            android:textSize="@dimen/edit_task_txt_size"
             android:text=""/>
 
-        <Button
+        <TextView
             android:id="@+id/btn_edit_task_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/change"
+            android:textSize="@dimen/edit_task_date_time_btn_txt_size"
+            android:textColor="@color/colorAccent"
+            android:clickable="true"
+            android:focusable="true" />
 
     </LinearLayout>
 
@@ -70,24 +81,33 @@
         <TextView
             android:id="@+id/txt_end"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
-            android:paddingLeft="32dp"
+            android:paddingLeft="@dimen/edit_task_padding_left"
             android:gravity="center_vertical"
-            android:text="End:"/>
+            android:text="@string/end"
+            android:textSize="@dimen/edit_task_txt_size" />
 
         <TextView
             android:id="@+id/txt_end_value"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
             android:gravity="center"
+            android:textSize="@dimen/edit_task_txt_size"
             android:text=""/>
 
-        <Button
+        <TextView
             android:id="@+id/btn_edit_task_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/change"
+            android:textSize="@dimen/edit_task_date_time_btn_txt_size"
+            android:textColor="@color/colorAccent"
+            android:clickable="true"
+            android:focusable="true" />
 
     </LinearLayout>
 
@@ -101,18 +121,20 @@
         <TextView
             android:id="@+id/txt_task_tag"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
-            android:paddingLeft="32dp"
+            android:paddingLeft="@dimen/edit_task_padding_left"
             android:gravity="center_vertical"
-            android:text="Tag"/>
+            android:text="@string/tag"
+            android:textSize="@dimen/edit_task_txt_size" />
 
         <EditText
             android:id="@+id/edit_text_task_tag"
             android:layout_width="0dp"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="2"
-            android:lines="1" />
+            android:maxLines="1"
+            android:inputType="text" />
 
     </LinearLayout>
 

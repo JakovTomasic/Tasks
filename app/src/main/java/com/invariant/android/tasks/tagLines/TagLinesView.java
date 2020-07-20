@@ -40,6 +40,11 @@ public class TagLinesView extends View {
      */
     private int maxWidthAttr, lineWidthAttr;
     private int lineColorAttr;
+    /**
+     * Custom attributes set in the xml layout file.
+     * True if for tag with just one element should be drawn one dot without a line.
+     */
+    private boolean drawOneDotAttr;
 
     /**
      * View constructor. Saves attributes and sets up paints.
@@ -70,7 +75,7 @@ public class TagLinesView extends View {
      * @param tasksAdapter Adapter of the ListView of tasks in the activity.
      */
     public void refresh(TasksAdapter tasksAdapter) {
-        tagLinesHelper = new TagLinesHelper(getContext(), tasksAdapter, maxWidthAttr, lineWidthAttr);
+        tagLinesHelper = new TagLinesHelper(getContext(), tasksAdapter, maxWidthAttr, lineWidthAttr, drawOneDotAttr);
         invalidate();
     }
 
@@ -92,8 +97,8 @@ public class TagLinesView extends View {
                     R.styleable.TagLinesView_maxWidth,  1000000);
             lineWidthAttr = attributes.getDimensionPixelSize(
                     R.styleable.TagLinesView_preferredLineWidth, 5);
-
             lineColorAttr = attributes.getColor(R.styleable.TagLinesView_lineColor, 0xf000);
+            drawOneDotAttr = attributes.getBoolean(R.styleable.TagLinesView_drawOneDot, false);
         } catch (Exception ignored) {
         } finally {
             // Important!
@@ -132,9 +137,8 @@ public class TagLinesView extends View {
         for(Map.Entry<String, Line> entry : tagLinesHelper.getLines().entrySet()) {
             Line line = entry.getValue();
 
-            // TODO: draw one dot custom attr
-            // Don't draw lines with just one dot
-            if(line.getRows().size() <= 1) continue;
+            // If just one dot should't be drawn continue
+            if(!drawOneDotAttr && line.getRows().size() <= 1) continue;
 
             float x = tagLinesHelper.getColumnX(line.getLineColumn());
             float startY = tagLinesHelper.getRowY(line.getFirstRow());

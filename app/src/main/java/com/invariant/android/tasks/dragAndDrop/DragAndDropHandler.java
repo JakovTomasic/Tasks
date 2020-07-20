@@ -128,6 +128,7 @@ public class DragAndDropHandler implements ListView.OnItemLongClickListener, Lis
         return true;
     }
 
+    // TODO: set invisible element over the dragged one
     /**
      * Overrides ListView.OnDragListener onDrag(...) method.
      * See official documentation.

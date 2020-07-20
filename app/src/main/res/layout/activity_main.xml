@@ -28,6 +28,7 @@
                 android:layout_marginRight="16dp"
                 custom:preferredLineWidth="3dp"
                 custom:maxWidth="100dp"
+                custom:drawOneDot="true"
                 custom:lineColor="@color/line"/>
 
     </com.invariant.android.tasks.tagLines.NonScrollableScrollView>

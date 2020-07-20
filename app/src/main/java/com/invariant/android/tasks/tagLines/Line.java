@@ -9,7 +9,7 @@ import java.util.ArrayList;
 class Line {
 
     /**
-     * Index of the column this line is in (0 indexed).
+     * Index of the column this line is in - 0 indexed from RIGHT TO LEFT.
      * Used to get X coordinate for a line drawing.
      */
     private Integer lineColumn;

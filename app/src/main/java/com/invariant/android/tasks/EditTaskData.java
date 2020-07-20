@@ -17,12 +17,16 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
-// TODO: a lot of HARDCODING!! no!...
 
 /**
  * Handles dialog for editing existing task and adding a new one.
  */
 class EditTaskData {
+
+    /**
+     * Constant for date time formatting.
+     */
+    private static final String DATE_TIME_FORMAT = "dd/MM/yyyy\nHH:mm";
 
     /**
      * Constants for the DateTime dialog. Tells if the
@@ -152,10 +156,11 @@ class EditTaskData {
 
         // Build dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogCustom);
-        // TODO: wut?! HARDCODING!!!
-        builder.setTitle("Title");
+
+        builder.setTitle((addingNewTask ? context.getResources().getString(R.string.add) :
+                context.getResources().getString(R.string.edit)));
         // Listener is added later
-        builder.setPositiveButton("kk", null);
+        builder.setPositiveButton(context.getResources().getString(R.string.save), null);
 
         // Create AlertDialog
         final AlertDialog alertDialog = builder.create();
@@ -176,8 +181,8 @@ class EditTaskData {
 
                         if(!task.isValid()) {
                             // Show error toast
-                            // TODO: should not be hardcoded
-                            Toast.makeText(context, "Task is not valid",
+                            Toast.makeText(context,
+                                    context.getResources().getString(R.string.error_task_not_valid),
                                     Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -219,10 +224,11 @@ class EditTaskData {
         final DatePicker datePicker = new DatePicker(context);
         datePicker.setCalendarViewShown(false);
 
-        builder.setTitle("Create Year");
+        builder.setTitle(context.getResources().getString(R.string.choose_date));
         builder.setView(datePicker);
-        builder.setNegativeButton("Cancel", null);
-        builder.setPositiveButton("Next", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(context.getResources().getString(R.string.cancel), null);
+        builder.setPositiveButton(context.getResources().getString(R.string.next),
+                new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 openTimePicker(typeId, datePicker);
@@ -248,10 +254,11 @@ class EditTaskData {
         final TimePicker timePicker = new TimePicker(context);
         timePicker.setIs24HourView(true);
 
-        builder.setTitle("Create Year");
+        builder.setTitle(context.getResources().getString(R.string.choose_time));
         builder.setView(timePicker);
-        builder.setNegativeButton("Cancel", null);
-        builder.setPositiveButton("Set", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(context.getResources().getString(R.string.cancel), null);
+        builder.setPositiveButton(context.getResources().getString(R.string.set),
+                new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Calendar calendar = Calendar.getInstance();
@@ -283,11 +290,10 @@ class EditTaskData {
      * Refreshes (sets) all dateTime TestViews in the dialog
      */
     private void refreshDatesTimes() {
-        // TODO: this dateFormat string should not be hardcoded
         ((TextView) dialogView.findViewById(R.id.txt_start_value)).setText(DateTimeConverter
-                .getDateTime(task.getStart(), "dd/MM/yyyy\nHH:mm"));
+                .getDateTime(task.getStart(), DATE_TIME_FORMAT));
         ((TextView) dialogView.findViewById(R.id.txt_end_value)).setText(DateTimeConverter
-                .getDateTime(task.getEnd(), "dd/MM/yyyy\nHH:mm"));
+                .getDateTime(task.getEnd(), DATE_TIME_FORMAT));
     }
 
     /**

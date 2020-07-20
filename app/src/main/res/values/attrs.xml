@@ -4,5 +4,6 @@
         <attr name="preferredLineWidth" format="dimension" />
         <attr name="maxWidth" format="dimension" />
         <attr name="lineColor" format="color" />
+        <attr name="drawOneDot" format="boolean" />
     </declare-styleable>
 </resources>

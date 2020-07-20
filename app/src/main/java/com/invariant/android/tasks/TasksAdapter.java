@@ -1,5 +1,6 @@
 package com.invariant.android.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,6 +19,12 @@ import java.util.ArrayList;
  * method for each item
  */
 public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchListener {
+
+
+    /**
+     * Constant for date formatting.
+     */
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
 
     /**
      * Constant for the invalid item position (index)
@@ -80,9 +87,10 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
     /**
      * Checks if given {@param position} is valid for the current ListView
      *
-     * @param position
+     * @param position Position (index) in the list
      * @return true if position is valid, otherwise false
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isValidPosition(int position) {
         if(position == INVALID_POSITION) return false;
         return position >= 0 && position < getCount();
@@ -115,7 +123,7 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
      * @param position Index of the current element in the list. Its data is being displayed.
      * @param convertView Previous view displaying other element. Used for reusability of the views,
      *                    performance optimization.
-     * @param container
+     * @param container Container
      * @return View that will be drawn.
      */
     @NonNull
@@ -145,12 +153,14 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
             vh = (ViewHolder) view.getTag();
         }
 
-        // TODO: this dateFormat string should not be hardcoded
+        //noinspection ConstantConditions
         ((TextView) vh.view.findViewById(R.id.tv_task_title)).setText(getItem(position).getTitle());
+        //noinspection ConstantConditions
         ((TextView) vh.view.findViewById(R.id.tv_start_time)).setText(DateTimeConverter
-                .getDateTime(getItem(position).getStart(), "dd/MM/yyyy"));
+                .getDateTime(getItem(position).getStart(), DATE_FORMAT));
+        //noinspection ConstantConditions
         ((TextView) vh.view.findViewById(R.id.tv_end_time)).setText(DateTimeConverter
-                .getDateTime(getItem(position).getEnd(), "dd/MM/yyyy"));
+                .getDateTime(getItem(position).getEnd(), DATE_FORMAT));
 
         if(position != draggingItemPosition) view.setVisibility(View.VISIBLE);
         else view.setVisibility(View.INVISIBLE);
@@ -163,8 +173,9 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
      *
      * @param v View that has been touched.
      * @param event ID of the type of action (event) that has been performed on {@param view} touch
-     * @return
+     * @return false if touch event is not handled.
      */
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         ViewHolder vh = (ViewHolder) v.getTag();

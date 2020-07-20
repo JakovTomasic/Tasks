@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (item.getItemId()) {
             case R.id.add_task:
                 EditTaskData editTaskData = new EditTaskData(this,
