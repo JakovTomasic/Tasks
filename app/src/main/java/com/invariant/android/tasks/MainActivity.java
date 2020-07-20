@@ -10,14 +10,13 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.invariant.android.tasks.DragAndDrop.DragAndDropHandler;
-import com.invariant.android.tasks.TagLines.NonScrollableScrollView;
-import com.invariant.android.tasks.TagLines.TagLinesView;
+import com.invariant.android.tasks.dragAndDrop.DragAndDropHandler;
+import com.invariant.android.tasks.tagLines.NonScrollableScrollView;
+import com.invariant.android.tasks.tagLines.TagLinesView;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
 
     /**
      * Main application object with all global application data.
@@ -62,34 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
         tagLinesRootView = findViewById(R.id.tag_lines_root_view);
 
-        // TODO: change this comment when functionality is changed
-        // Data mock up
-        ArrayList<Task> tasks;
-        if (appData.getTasks() == null) {
-            tasks = new ArrayList<>();
-//            for (int i = 0; i < 21; i++) {
-//                tasks.add(new Task("test " + i, 0, i));
-//            }
-//            ((AppData) getApplication()).setTasks(tasks);
-//            ((AppData) getApplication()).getTasks().get(1).setTag("jej");
-//            ((AppData) getApplication()).getTasks().get(4).setTag("jej");
-
-            int cnt = 20;
-            cnt /= 2;
-            for (int i = 0; i <= cnt; i++) {
-                Task temp = new Task(i, "test " + i, 0, i);
-                temp.setTag(String.valueOf(i));
-                tasks.add(temp);
-            }
-            for (int i = cnt; i >= 0; i--) {
-                Task temp = new Task(cnt + i, "heh " + i, 0, i);
-                temp.setTag(String.valueOf(i));
-                tasks.add(temp);
-            }
-            ((AppData) getApplication()).setTasks(tasks);
-        } else {
-            tasks = ((AppData) getApplication()).getTasks();
-        }
+        // This list of tasks is now bound to the global application tasks list.
+        // If anything in that list changes, it changes everywhere in the app.
+        ArrayList<Task> tasks = ((AppData) getApplication()).getTasks();
 
         // Save screen dimensions for future calculations
         appData.setScreenDimensions(this);
@@ -112,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 editTaskData.setOnFinishListener(new EditTaskData.OnFinishListener() {
                     @Override
                     public void onSuccessfulSave(Task task) {
-                        ((AppData) getApplication()).replaceTask(position, task);
+                        ((AppData) getApplication()).updateTask(position, task);
                         tasksAdapter.notifyDataSetChanged();
 
                         tagLinesView.refresh(tasksAdapter);
@@ -164,8 +138,8 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Handles on actionBar menu item click.
-     * @param item
-     * @return
+     *
+     * R.id.add_task Opens {@link EditTaskData} to add a new task
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

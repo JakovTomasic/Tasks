@@ -70,7 +70,6 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
      *
      * @param fromPosition Previous position
      * @param toPosition To position
-     * TODO: fix size changes so toPosition is not valid anymore
      */
     public void moveItem(int fromPosition, int toPosition) {
         if(!isValidPosition(fromPosition) || !isValidPosition(toPosition)) return;

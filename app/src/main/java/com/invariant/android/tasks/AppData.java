@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.util.DisplayMetrics;
 
+import com.invariant.android.tasks.database.DatabaseHandler;
+
 import java.util.ArrayList;
 
 /**
@@ -21,10 +23,16 @@ public class AppData extends Application {
      */
     private int screenWidth, screenHeight;
 
+
     /**
      * List of all stored tasks
      */
-    private ArrayList<Task> tasks = null;
+    private ArrayList<Task> tasks;
+
+    /**
+     * Handler for all the db work.
+     */
+    private DatabaseHandler dbHandler;
 
     /**
      * Method automatically called on application start. Sets up all important data.
@@ -33,6 +41,10 @@ public class AppData extends Application {
     public void onCreate() {
         super.onCreate();
         screenWidth = screenHeight = DIMENSION_UNDEFINED;
+        tasks = new ArrayList<>();
+
+        dbHandler = new DatabaseHandler(this);
+        dbHandler.loadAllTasks();
     }
 
     /**
@@ -87,34 +99,36 @@ public class AppData extends Application {
         Task moveItem = tasks.get(fromPosition);
         tasks.remove(moveItem);
         tasks.add(toPosition, moveItem);
-        moveItem.setPosition(toPosition);
+        for(int idx = 0; idx < tasks.size(); idx++) {
+            tasks.get(idx).setPosition(idx);
+        }
+        dbHandler.updateAll();
     }
 
     /**
-     * Getter and setter methods for {@link this#tasks}.
+     * Getter method for {@link this#tasks}.
      */
     public ArrayList<Task> getTasks() {
         return tasks;
-    }
-    void setTasks(ArrayList<Task> tasks) {
-        this.tasks = tasks;
     }
 
     /**
      * Replaces task at the given position with the new task.
      * @param position Position of the old task.
-     * @param tasks New task that will replace old one.
+     * @param task New task that will replace old one.
      */
-    void replaceTask(int position, Task tasks) {
-        this.tasks.set(position, tasks);
+    void updateTask(int position, Task task) {
+        this.tasks.set(position, task);
+        dbHandler.updateTask(task);
     }
 
     /**
      * Adds the {@param task} to the {@link AppData#tasks} list.
      */
-    void addTask(Task task) {
+    public void addTask(Task task) {
         this.tasks.add(task);
         task.setPosition(getTasks().size()-1);
+        dbHandler.addTask(task);
     }
 
     /**
@@ -122,6 +136,7 @@ public class AppData extends Application {
      * @param position Index of the task that need to be removed.
      */
     void removeTask(int position) {
+        dbHandler.removeTask(tasks.get(position));
         this.tasks.remove(position);
     }
 

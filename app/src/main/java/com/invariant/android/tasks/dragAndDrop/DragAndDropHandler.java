@@ -1,4 +1,4 @@
-package com.invariant.android.tasks.DragAndDrop;
+package com.invariant.android.tasks.dragAndDrop;
 
 import android.app.Activity;
 import android.graphics.Canvas;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.invariant.android.tasks.TagLines.TagLinesView;
+import com.invariant.android.tasks.tagLines.TagLinesView;
 import com.invariant.android.tasks.Task;
 import com.invariant.android.tasks.TasksAdapter;
 

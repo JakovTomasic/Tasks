@@ -14,14 +14,14 @@
         android:layout_height="wrap_content" />
 
 
-    <com.invariant.android.tasks.TagLines.NonScrollableScrollView
+    <com.invariant.android.tasks.tagLines.NonScrollableScrollView
         android:id="@+id/tag_lines_root_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:scrollbars="none">
 
-            <com.invariant.android.tasks.TagLines.TagLinesView
+            <com.invariant.android.tasks.tagLines.TagLinesView
                 android:id="@+id/tag_lines_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
                 custom:maxWidth="100dp"
                 custom:lineColor="@color/line"/>
 
-    </com.invariant.android.tasks.TagLines.NonScrollableScrollView>
+    </com.invariant.android.tasks.tagLines.NonScrollableScrollView>
 
 
 </RelativeLayout>

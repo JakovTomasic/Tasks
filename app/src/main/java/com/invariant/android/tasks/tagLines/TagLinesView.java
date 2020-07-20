@@ -1,4 +1,4 @@
-package com.invariant.android.tasks.TagLines;
+package com.invariant.android.tasks.tagLines;
 
 import android.content.Context;
 import android.content.res.TypedArray;

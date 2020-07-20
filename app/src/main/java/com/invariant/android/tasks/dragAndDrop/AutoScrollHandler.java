@@ -1,4 +1,4 @@
-package com.invariant.android.tasks.DragAndDrop;
+package com.invariant.android.tasks.dragAndDrop;
 
 import android.app.Activity;
 import android.widget.ListView;
