@@ -15,6 +15,11 @@ import androidx.room.PrimaryKey;
 public class Task {
 
     /**
+     * Constant for the invalid item id
+     */
+    static final int INVALID_ID = -100;
+
+    /**
      * Id of the task for the DB.
      */
     @PrimaryKey
@@ -90,18 +95,11 @@ public class Task {
     }
 
     /**
-     * @return total duration of the {@link Task} in milliseconds.
-     *         Returns 0 if {@link Task#end} is before {@link Task#start}.
-     */
-    long getDuration() {
-        return Math.max(getEnd()-getStart(), 0);
-    }
-
-    /**
      * Checks if given task is valid. Used for task changing input validation.
      * @return true if task is valid, false otherwise.
      */
     boolean isValid() {
+        if(id == INVALID_ID) return false;
         if(start > end) return false;
         return !title.isEmpty();
     }

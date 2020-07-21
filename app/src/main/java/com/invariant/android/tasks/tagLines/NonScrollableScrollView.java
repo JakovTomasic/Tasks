@@ -1,5 +1,6 @@
 package com.invariant.android.tasks.tagLines;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -34,6 +35,7 @@ public class NonScrollableScrollView extends ScrollView {
      * @return By returning false, touch event is carried to the next view
      * and manual scrolling is avoided.
      */
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return false;

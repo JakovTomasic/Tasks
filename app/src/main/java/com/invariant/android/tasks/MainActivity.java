@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         lvTasks.setAdapter(tasksAdapter);
 
         DragAndDropHandler dragAndDropHandler = new DragAndDropHandler(
-                this, tasks, lvTasks, tasksAdapter, tagLinesView);
+                this, lvTasks, tasksAdapter, tagLinesView);
         lvTasks.setOnItemLongClickListener(dragAndDropHandler);
         lvTasks.setOnDragListener(dragAndDropHandler);
         // On click open task edit dialog

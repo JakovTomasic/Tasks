@@ -164,7 +164,8 @@ class EditTaskData {
 
         // Create AlertDialog
         final AlertDialog alertDialog = builder.create();
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if(alertDialog.getWindow() != null)
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.setView(dialogView);
 
         // When defined like this, clicking positive button won't dismiss dialog automatically

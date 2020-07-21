@@ -3,7 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingRight="@dimen/edit_task_horizontal_padding"
+    android:paddingEnd="@dimen/edit_task_horizontal_padding">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
-            android:paddingLeft="@dimen/edit_task_padding_left"
+            android:paddingLeft="@dimen/edit_task_horizontal_padding"
             android:gravity="center_vertical"
             android:text="@string/title"
             android:textSize="@dimen/edit_task_txt_size"/>
@@ -43,7 +45,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
-            android:paddingLeft="@dimen/edit_task_padding_left"
+            android:paddingLeft="@dimen/edit_task_horizontal_padding"
             android:gravity="center_vertical"
             android:text="@string/start"
             android:textSize="@dimen/edit_task_txt_size" />
@@ -57,17 +59,16 @@
             android:textSize="@dimen/edit_task_txt_size"
             android:text=""/>
 
-        <TextView
+        <ImageView
             android:id="@+id/btn_edit_task_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/change"
-            android:textSize="@dimen/edit_task_date_time_btn_txt_size"
-            android:textColor="@color/colorAccent"
+            android:layout_gravity="center"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:src="@drawable/ic_edit"
+            android:background="?selectableItemBackground"/>
 
     </LinearLayout>
 
@@ -83,7 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
-            android:paddingLeft="@dimen/edit_task_padding_left"
+            android:paddingLeft="@dimen/edit_task_horizontal_padding"
             android:gravity="center_vertical"
             android:text="@string/end"
             android:textSize="@dimen/edit_task_txt_size" />
@@ -97,17 +98,16 @@
             android:textSize="@dimen/edit_task_txt_size"
             android:text=""/>
 
-        <TextView
+        <ImageView
             android:id="@+id/btn_edit_task_end"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/change"
-            android:textSize="@dimen/edit_task_date_time_btn_txt_size"
-            android:textColor="@color/colorAccent"
+            android:layout_gravity="center"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:src="@drawable/ic_edit"
+            android:background="?selectableItemBackground" />
 
     </LinearLayout>
 
@@ -123,7 +123,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/edit_task_txt_height"
             android:layout_weight="1"
-            android:paddingLeft="@dimen/edit_task_padding_left"
+            android:paddingLeft="@dimen/edit_task_horizontal_padding"
             android:gravity="center_vertical"
             android:text="@string/tag"
             android:textSize="@dimen/edit_task_txt_size" />

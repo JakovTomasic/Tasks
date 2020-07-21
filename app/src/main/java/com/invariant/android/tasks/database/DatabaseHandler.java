@@ -2,6 +2,7 @@ package com.invariant.android.tasks.database;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
@@ -39,7 +40,7 @@ public class DatabaseHandler {
         appData = (AppData) context;
         db = Room.databaseBuilder(context.getApplicationContext(),
                 AppDatabase.class, "db-tasks")
-                .addCallback(dbMockupCallback)
+                .addCallback(dbMockUpCallback)
                 .build();
     }
 
@@ -48,19 +49,20 @@ public class DatabaseHandler {
      *
      * TODO: remove when removing mocking
      */
-    RoomDatabase.Callback dbMockupCallback = new RoomDatabase.Callback() {
-        public void onCreate (SupportSQLiteDatabase db) {
+    @SuppressWarnings("FieldCanBeLocal")
+    private RoomDatabase.Callback dbMockUpCallback = new RoomDatabase.Callback() {
+        public void onCreate (@NonNull SupportSQLiteDatabase db) {
             Random random = new Random();
             int hourInMillis = 1000 * 60 * 60;
             int cnt = 24;
             for(int i = 0; i < cnt; i++) {
                 Task task = new Task(i, "Naziv" + i, System.currentTimeMillis(), System.currentTimeMillis()+hourInMillis);
                 task.setPosition(i);
-                task.setTag("tag " + random.nextInt(cnt/2));
+                if(random.nextInt(4) != 0) task.setTag("tag " + random.nextInt(cnt/2));
                 appData.addTask(task);
             }
         }
-        public void onOpen (SupportSQLiteDatabase db) {
+        public void onOpen (@NonNull SupportSQLiteDatabase db) {
 
         }
     };

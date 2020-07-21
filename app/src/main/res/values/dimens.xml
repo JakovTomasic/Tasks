@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!--    list_item_task-->
+    <dimen name="padding_left_list_item_task">16dp</dimen>
     <dimen name="hor_spacing_list_item_task">16dp</dimen>
     <dimen name="main_list_title_text_size">18sp</dimen>
     <dimen name="main_list_date_text_size">16sp</dimen>
@@ -8,7 +9,7 @@
 <!--    edit date time dialog-->
     <dimen name="edit_task_date_time_btn_txt_size">20sp</dimen>
     <dimen name="edit_task_txt_size">16sp</dimen>
-    <dimen name="edit_task_padding_left">32dp</dimen>
+    <dimen name="edit_task_horizontal_padding">32dp</dimen>
     <dimen name="edit_task_txt_height">64dp</dimen>
 
 </resources>

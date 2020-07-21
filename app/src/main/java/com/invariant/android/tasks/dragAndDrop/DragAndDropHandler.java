@@ -9,10 +9,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.invariant.android.tasks.tagLines.TagLinesView;
-import com.invariant.android.tasks.Task;
 import com.invariant.android.tasks.TasksAdapter;
 
-import java.util.ArrayList;
 
 /**
  * Handles drag and drop functionality in the given list.
@@ -20,18 +18,10 @@ import java.util.ArrayList;
 public class DragAndDropHandler implements ListView.OnItemLongClickListener, ListView.OnDragListener {
 
     /**
-     * Current activity for context
-     */
-    private Activity context;
-    /**
      * See {@link AutoScrollHandler}
      */
     private AutoScrollHandler autoScrollHandler;
 
-    /**
-     * List of all tasks. Points to the global application variable.
-     */
-    private ArrayList<Task> tasks;
     /**
      * ListView in which drag and drop functionality is being used.
      */
@@ -53,22 +43,30 @@ public class DragAndDropHandler implements ListView.OnItemLongClickListener, Lis
      */
     private float lastHoverY;
     /**
-     * Position (index) of the item that is being dragged in the list ({@link this#tasks}) before
+     * Position (index) of the item that is being dragged in the list before
      * drag started.
      */
     private Integer dragStartPosition;
+    /**
+     * Current position (index) of the item that is being dragged in the list.
+     */
+    private Integer currentItemPosition;
+    /**
+     * true if item is successfully dropped, false if drag and drop action
+     * has been terminated. In that case item needs to be moved back to
+     * starting position {@link #dragStartPosition}.
+     * If drag was successful, item just stays at current position {@link #currentItemPosition}
+     */
+    private boolean isItemDropped;
 
     /**
      * Constructor. Sets all up.
-     * @param context See {@link this#context}
-     * @param tasks See {@link this#tasks}
+     * @param context See Current activity for context
      * @param lvTasks See {@link this#lvTasks}
      * @param tasksAdapter See {@link this#tasksAdapter}
      */
-    public DragAndDropHandler(Activity context, ArrayList<Task> tasks, ListView lvTasks,
+    public DragAndDropHandler(Activity context, ListView lvTasks,
                               TasksAdapter tasksAdapter, TagLinesView tagLinesView) {
-        this.context = context;
-        this.tasks = tasks;
         this.lvTasks = lvTasks;
         this.tasksAdapter = tasksAdapter;
         this.tagLinesView = tagLinesView;
@@ -80,8 +78,11 @@ public class DragAndDropHandler implements ListView.OnItemLongClickListener, Lis
      * @param position See {@link this#dragStartPosition}
      */
     private void startDrag(int position) {
-        dragStartPosition = position;
-        tasksAdapter.setDraggingItem(position);
+        currentItemPosition = dragStartPosition = position;
+        isItemDropped = false;
+        if(tasksAdapter.getItem(position) != null)
+            //noinspection ConstantConditions
+            tasksAdapter.setDraggingItem(tasksAdapter.getItem(position).getId());
         tasksAdapter.notifyDataSetChanged();
     }
 
@@ -89,7 +90,15 @@ public class DragAndDropHandler implements ListView.OnItemLongClickListener, Lis
      * Handle everything that needs to be handled on drag stop.
      */
     private void stopDrag() {
-        dragStartPosition = null;
+        autoScrollHandler.stopScrolling();
+        if(!isItemDropped) {
+            // If dragging is canceled, move item back to starting position
+            tasksAdapter.moveItem(currentItemPosition, dragStartPosition);
+            tagLinesView.refresh(tasksAdapter);
+        }
+
+        currentItemPosition = dragStartPosition = null;
+        isItemDropped = false;
         tasksAdapter.draggingStopped();
         tasksAdapter.notifyDataSetChanged();
     }
@@ -128,7 +137,6 @@ public class DragAndDropHandler implements ListView.OnItemLongClickListener, Lis
         return true;
     }
 
-    // TODO: set invisible element over the dragged one
     /**
      * Overrides ListView.OnDragListener onDrag(...) method.
      * See official documentation.
@@ -143,23 +151,37 @@ public class DragAndDropHandler implements ListView.OnItemLongClickListener, Lis
             case DragEvent.ACTION_DRAG_STARTED:
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
+                // When drag item has entered back into ListView stop scrolling
                 autoScrollHandler.stopScrolling();
                 break;
             case DragEvent.ACTION_DRAG_LOCATION:
+                // When drag item is moving update last location
                 lastHoverY = event.getY();
+
+                // If item is hovering over the new position, move it there to
+                // show empty place in the tasks ListView
+                if(currentItemPosition == position) break;
+                tasksAdapter.moveItem(currentItemPosition, position);
+                tasksAdapter.notifyDataSetChanged();
+                tagLinesView.refresh(tasksAdapter);
+
+                currentItemPosition = position;
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
+                // When drag item exit ListView start scrolling
                 if((int)lastHoverY < lvTasks.getHeight()/2) autoScrollHandler.startScrollingUp();
                 else autoScrollHandler.startScrollingDown();
                 break;
             case DragEvent.ACTION_DROP:
-                tasksAdapter.moveItem(dragStartPosition, position);
+                // When drag item is dropped move item
+                tasksAdapter.moveItem(currentItemPosition, position);
                 tagLinesView.refresh(tasksAdapter);
+                isItemDropped = true;
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
+                // When drag ends set item visibility back to visible and finish everything
                 View view = (View) event.getLocalState();
                 view.setVisibility(View.VISIBLE);
-                autoScrollHandler.stopScrolling();
                 stopDrag();
                 break;
         }

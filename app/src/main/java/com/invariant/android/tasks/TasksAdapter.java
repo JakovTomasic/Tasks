@@ -27,19 +27,14 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
     private static final String DATE_FORMAT = "dd/MM/yyyy";
 
     /**
-     * Constant for the invalid item position (index)
-     */
-    private static final int INVALID_POSITION = -1;
-
-    /**
      * Height of one item/row in the ListView in pixels
      */
     private int rowHeight;
     /**
-     * Position (index) of the item that is currently being dragged.
-     * Equals to {@link TasksAdapter#INVALID_POSITION} if no item is being dragged
+     * ID of the item that is currently being dragged.
+     * Equals to {@link Task#INVALID_ID} if no item is being dragged.
      */
-    private int draggingItemPosition;
+    private int draggingItemId;
 
     /**
      * Stores root view and coordinates of that view that have been touched most recently.
@@ -68,7 +63,7 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
     TasksAdapter(Activity context, ArrayList<Task> items, int rowHeight) {
         super(context, 0, items);
         this.rowHeight = rowHeight;
-        draggingItemPosition = INVALID_POSITION;
+        draggingItemId = Task.INVALID_ID;
     }
 
     /**
@@ -92,7 +87,6 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isValidPosition(int position) {
-        if(position == INVALID_POSITION) return false;
         return position >= 0 && position < getCount();
     }
 
@@ -103,18 +97,18 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
         return this.rowHeight;
     }
     /**
-     * Sets {@link this#draggingItemPosition} on the start of drag
+     * Sets {@link this#draggingItemId} on the start of drag
      *
-     * @param position index of the element that is being dragged in the list
+     * @param id Id of the {@link Task} element that is being dragged in the list
      */
-    public void setDraggingItem(int position) {
-        this.draggingItemPosition = position;
+    public void setDraggingItem(int id) {
+        this.draggingItemId = id;
     }
     /**
      * Resets all drag-helper variables as before drag
      */
     public void draggingStopped() {
-        this.draggingItemPosition = INVALID_POSITION;
+        this.draggingItemId = Task.INVALID_ID;
     }
 
     /**
@@ -153,16 +147,16 @@ public class TasksAdapter extends ArrayAdapter<Task> implements View.OnTouchList
             vh = (ViewHolder) view.getTag();
         }
 
-        //noinspection ConstantConditions
-        ((TextView) vh.view.findViewById(R.id.tv_task_title)).setText(getItem(position).getTitle());
-        //noinspection ConstantConditions
-        ((TextView) vh.view.findViewById(R.id.tv_start_time)).setText(DateTimeConverter
-                .getDateTime(getItem(position).getStart(), DATE_FORMAT));
-        //noinspection ConstantConditions
-        ((TextView) vh.view.findViewById(R.id.tv_end_time)).setText(DateTimeConverter
-                .getDateTime(getItem(position).getEnd(), DATE_FORMAT));
+        Task currentTask = getItem(position);
+        if(currentTask == null) return view;
 
-        if(position != draggingItemPosition) view.setVisibility(View.VISIBLE);
+        ((TextView) vh.view.findViewById(R.id.tv_task_title)).setText(currentTask.getTitle());
+        ((TextView) vh.view.findViewById(R.id.tv_start_time)).setText(DateTimeConverter
+                .getDateTime(currentTask.getStart(), DATE_FORMAT));
+        ((TextView) vh.view.findViewById(R.id.tv_end_time)).setText(DateTimeConverter
+                .getDateTime(currentTask.getEnd(), DATE_FORMAT));
+
+        if(draggingItemId != currentTask.getId()) view.setVisibility(View.VISIBLE);
         else view.setVisibility(View.INVISIBLE);
 
         return view;

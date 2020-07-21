@@ -17,6 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingLeft="@dimen/padding_left_list_item_task"
             android:layout_marginRight="@dimen/hor_spacing_list_item_task"
             android:layout_marginEnd="@dimen/hor_spacing_list_item_task"
             android:textSize="@dimen/main_list_title_text_size"

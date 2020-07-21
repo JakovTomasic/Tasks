@@ -103,6 +103,7 @@ class TagLinesHelper {
             if(!lines.containsKey(task.getTag())) {
                 lines.put(task.getTag(), new Line());
             }
+            //noinspection ConstantConditions
             lines.get(task.getTag()).addRow(currentRow);
         }
 

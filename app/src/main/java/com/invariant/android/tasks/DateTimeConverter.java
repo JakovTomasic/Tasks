@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+/**
+ * Methods extracted here to simplify code and add abstraction layer.
+ */
 class DateTimeConverter {
 
     /**
